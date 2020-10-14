@@ -1,0 +1,49 @@
+{
+  "window.zoomLevel": 1,
+  "editor.acceptSuggestionOnEnter": "off",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "python.linting.enabled": true,
+  "python.linting.mypyEnabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.mypyArgs": [
+    "--show-column-numbers",
+    "--ignore-missing-imports"
+  ],
+  "python.sortImports.args": ["-rc"],
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": ["--line-length=99"],
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "remote.SSH.remotePlatform": {
+    "Work-Laptop": "macOS",
+    "pi": "linux"
+  },
+  "editor.renderWhitespace": "none",
+  "editor.tabSize": 2,
+  "prettier.singleQuote": true,
+  "editor.rulers": [80, 100],
+  "workbench.colorTheme": "Minuit Soft",
+  "editor.matchBrackets": false,
+  "editor.mouseWheelScrollSensitivity": 2,
+  "cSpell.userWords": ["customisation", "personalise"],
+  "files.watcherExclude": {
+    "**/.bloop": true,
+    "**/.metals": true,
+    "**/.ammonite": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "prettier.semi": false,
+  "typescript.updateImportsOnFileMove.enabled": "always"
+}
