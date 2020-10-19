@@ -1,21 +1,20 @@
-"""Functions responsible for set management.
-- Downloading set data from data dragon
-- Parsing set data 
-- Storing set data to mongo
-"""
+"""Utility Functions responsible for making set management easier."""
 
 import json
 import logging
 import os
+import shutil
 import sys
 from typing import List
 from zipfile import ZipFile
 
 import requests
 
+from backend.db_client import MongoClient
+from backend.models import Card
+
 LOGGER = logging.getLogger("SetManager")
-LOGGER.setLevel(level=os.getenv("LOG_LEVEL", "INFO"))
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+
 
 _HERE = os.path.dirname(__file__)  # 'private' const
 
@@ -48,12 +47,19 @@ def guarantee_temp_dir() -> None:
         LOGGER.info("Temp directory already exists")
 
 
+def delete_temp_dir() -> None:
+    """Delete temp directory and its contents."""
+    try:
+        shutil.rmtree(TEMP_DIR)
+        LOGGER.info("Temp directory deleted")
+    except OSError as err:
+        LOGGER.error(err.strerror)
+
+
 def download_set_data(set_num: int) -> str:
     """Download the set data from data dragon for given set number.
     Return file destination path.
     """
-    guarantee_temp_dir()
-
     file_name = set_zip(set_num)
     file_destination = os.path.join(TEMP_DIR, file_name)
 
@@ -91,3 +97,10 @@ def extract_set_json(set_num: int) -> str:
         zip_file.extract(member=extract_target, path=TEMP_DIR)
 
     return extracted_to
+
+
+def read_set_json(set_json_path: str) -> List[Card]:
+    """Read set JSON file at given path and return cards as Python List"""
+    with open(set_json_path, "r") as set_json_content:
+        cards = json.load(set_json_content)
+    return cards

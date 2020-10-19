@@ -11,11 +11,10 @@ CORS(app)
 
 def _digest_url_args(request: Request) -> Filter:
     rarities = Rarities(
-        common=request.args.get('common'),
-        rare=request.args.get('rare'),
-        epic=request.args.get('epic'),
-        champion=request.args.get('champion'),
-        
+        common=request.args.get("common"),
+        rare=request.args.get("rare"),
+        epic=request.args.get("epic"),
+        champion=request.args.get("champion"),
     )
     print(rarities)
 
