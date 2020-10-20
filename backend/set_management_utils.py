@@ -4,13 +4,11 @@ import json
 import logging
 import os
 import shutil
-import sys
 from typing import List
 from zipfile import ZipFile
 
 import requests
 
-from backend.db_client import MongoClient
 from backend.models import Card
 
 LOGGER = logging.getLogger("SetManager")
@@ -69,9 +67,9 @@ def download_set_data(set_num: int) -> str:
     LOGGER.info("Requesting %s", download_url)
     resp = requests.get(download_url, stream=True)
 
-    with open(file_destination, "wb") as fd:
+    with open(file_destination, "wb") as file_data:
         for chunk in resp.iter_content(chunk_size=128):
-            fd.write(chunk)
+            file_data.write(chunk)
 
     LOGGER.info("Completed download of %s", file_name)
     return file_destination

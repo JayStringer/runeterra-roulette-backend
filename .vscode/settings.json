@@ -45,5 +45,21 @@
     "editor.defaultFormatter": "vscode.json-language-features"
   },
   "prettier.semi": false,
-  "typescript.updateImportsOnFileMove.enabled": "always"
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "cSpell.words": [
+    "and",
+    "bligewater",
+    "demacia",
+    "description",
+    "freljord",
+    "levelup",
+    "levelup description",
+    "mongodb",
+    "noxus",
+    "piltover",
+    "piltover and zaun",
+    "pymongo",
+    "targon",
+    "zaun"
+  ]
 }

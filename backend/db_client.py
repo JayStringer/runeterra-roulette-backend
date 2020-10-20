@@ -1,9 +1,10 @@
+"""MongoDB client for interfacing with cards collection"""
+
 import logging
-from typing import Dict
 
 import pymongo
 
-from backend.models import Card, CardDoc
+from backend.models import Card, CardDoc, Filter
 
 
 # Should probably make the class name less generic, or make the class more
@@ -23,7 +24,7 @@ class MongoClient:
     """
 
     def __init__(self, host: str = "localhost", port: int = 27017):
-        """Initialise MongoClient"""
+        """Initialise MongoClient."""
         self.logger = logging.getLogger(self.__class__.__name__)
         self._client = pymongo.MongoClient(f"mongodb://{host}:{port}/")
         self.logger.info("Connection to mongodb established")
@@ -32,15 +33,30 @@ class MongoClient:
         self.card_collection = self._db["cards"]
 
     def __enter__(self):
-        """Allows class to be used with context manager"""
+        """Allows class to be used with context manager."""
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        """Close connect to mongodb on manager exit"""
-        self.logger.info("Connection to mongodb closed")
-        self._client.close()
+        """Close connection to mongodb on manager exit."""
+        self.close()
 
-    def upsert_card(self, card: Card):
+    def close(self):
+        """Close connection to client."""
+        self._client.close()
+        self.logger.info("Connection to mongodb closed")
+
+    def update_db_indexes(self) -> None:
+        """Add indexes to card collection to make queries faster"""
+        self.card_collection.create_index(
+            [
+                ("regionRef", pymongo.ASCENDING),
+                ("rarityRef", pymongo.ASCENDING),
+                ("collectible", pymongo.ASCENDING),
+            ]
+        )
+        self.logger.info("Cards collection indexes updated")
+
+    def upsert_card(self, card: Card) -> None:
         """Update/insert a card into the 'cards' collection in the database.
 
         Cards are unique by card code. If one exists already in the collection
@@ -55,3 +71,6 @@ class MongoClient:
         doc: CardDoc = {**card, **_id}  # type: ignore
         self.card_collection.replace_one(filter=_id, replacement=doc, upsert=True)
         self.logger.info("Inserted '%s' to the database", card["name"])
+
+    def request_cards(self, filer: Filter):
+        pass

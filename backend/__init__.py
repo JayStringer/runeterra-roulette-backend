@@ -1,3 +1,5 @@
+"""Backend componenet of Runeterra Roulette web app project"""
+
 import logging
 import os
 import sys

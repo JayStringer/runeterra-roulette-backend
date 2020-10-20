@@ -1,3 +1,5 @@
+"""Models to assist with type hinting"""
+
 from dataclasses import dataclass
 from typing import List, Optional, TypedDict
 

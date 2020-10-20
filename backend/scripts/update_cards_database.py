@@ -5,9 +5,14 @@ data dragon.
 import logging
 
 from backend.db_client import MongoClient
-from backend.set_management_utils import (delete_temp_dir, download_set_data,
-                                          extract_set_json, guarantee_temp_dir,
-                                          read_set_json)
+from backend.set_management_utils import (
+    delete_temp_dir,
+    download_set_data,
+    extract_set_json,
+    guarantee_temp_dir,
+    read_set_json,
+)
+from pymongo import ASCENDING
 
 NUMBER_OF_SETS = 3  # Total sets released for LoR
 SET_NUMBERS = range(1, NUMBER_OF_SETS + 1)
@@ -17,17 +22,21 @@ def main():
     guarantee_temp_dir()
     # Download all of the sets to a temporary folder
     [download_set_data(set_num) for set_num in SET_NUMBERS]
-    
+
     # Extract the JSON file that we're interested in from the set zips
     set_json_paths = [extract_set_json(set_num) for set_num in SET_NUMBERS]
+
+    mongo_client = MongoClient()
 
     for set_json_path in set_json_paths:
         # Read card data from json files
         set_json = read_set_json(set_json_path)
-        
-        with MongoClient() as client:
-            # Upsert each card to the database
-            [client.upsert_card(card) for card in set_json]
+        # Upsert each card to the database
+        [mongo_client.upsert_card(card) for card in set_json]
+
+    # Update indexes to make sure queries are more efficient
+    mongo_client.update_db_indexes()
+    mongo_client.close()
 
     # Clean up by deleting the temporary folder
     delete_temp_dir()
