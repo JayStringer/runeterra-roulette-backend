@@ -2,6 +2,7 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "flask >= 1.1.2",
+    "flask-cors >= 3.0.9",
     "requests >= 2.24.0",
     "pymongo >= 3.11.0",
 ]

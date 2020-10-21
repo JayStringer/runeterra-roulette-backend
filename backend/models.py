@@ -4,22 +4,11 @@ from dataclasses import dataclass
 from typing import List, Literal, Optional, TypedDict
 
 RegionRef = Literal[
-  "BilgeWater",
-  "Demacia",
-  "Freljord",
-  "Ionia",
-  "Noxus",
-  "PiltoverZaun",
-  "ShadowIsles",
-  "Targon"
+    "BilgeWater", "Demacia", "Freljord", "Ionia", "Noxus", "PiltoverZaun", "ShadowIsles", "Targon"
 ]
 
-RarityRef = Literal[
-  "Common",
-  "Rare",
-  "Epic",
-  "Champion"
-]
+RarityRef = Literal["Common", "Rare", "Epic", "Champion"]
+
 
 @dataclass
 class Regions:

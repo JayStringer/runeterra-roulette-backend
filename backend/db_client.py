@@ -1,7 +1,7 @@
 """MongoDB client for interfacing with cards collection"""
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import pymongo
 
@@ -73,23 +73,24 @@ class MongoClient:
         self.card_collection.replace_one(filter=_id, replacement=doc, upsert=True)
         self.logger.info("Inserted '%s' to the database", card["name"])
 
+    def find_cards(
+        self,
+        regions: List[RegionRef],
+        rarities: List[RarityRef],
+        limit: int = 0,
+        projection: Optional[Union[Dict, List]] = None,
+    ):
+        """Search for N (limit) number of cards in cards that falls under any
+        of the given regions and matches rarity to one of the given rarities.
 
-    def find_cards(self, regions: List[RegionRef], rarities: List[RarityRef], limit: int=0, projection: Union[Dict, List]=[]):
-        """"""
-        # db.getCollection('cards').find({"collectible": true, "regionRef": {$in: ["Noxus", "Ionia"]}, "rarity": {$in: ["Champion"]}})
+        Specify what is return with the projection argument.
+        """
         query = {
             "collectible": True,
             "regionRef": {"$in": regions},
-            "rarityRef": {"$in": rarities}
-            }
+            "rarityRef": {"$in": rarities},
+        }
 
         self.logger.info("Card search query: %s", query)
 
         return self.card_collection.find(filter=query, limit=limit, projection=projection)
-
-
-if __name__ == "__main__":
-    with MongoClient() as client:
-        for doc in client.find_cards(regions=["Noxus"], rarities=["Champion"], projection=["naame", "cardode"]):
-            print(doc)
-    
