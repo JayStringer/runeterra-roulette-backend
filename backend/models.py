@@ -1,8 +1,25 @@
 """Models to assist with type hinting"""
 
 from dataclasses import dataclass
-from typing import List, Optional, TypedDict
+from typing import List, Literal, Optional, TypedDict
 
+RegionRef = Literal[
+  "BilgeWater",
+  "Demacia",
+  "Freljord",
+  "Ionia",
+  "Noxus",
+  "PiltoverZaun",
+  "ShadowIsles",
+  "Targon"
+]
+
+RarityRef = Literal[
+  "Common",
+  "Rare",
+  "Epic",
+  "Champion"
+]
 
 @dataclass
 class Regions:

@@ -1,10 +1,11 @@
 """MongoDB client for interfacing with cards collection"""
 
 import logging
+from typing import Dict, List, Union
 
 import pymongo
 
-from backend.models import Card, CardDoc, Filter
+from backend.models import Card, CardDoc, RarityRef, RegionRef
 
 
 # Should probably make the class name less generic, or make the class more
@@ -72,5 +73,23 @@ class MongoClient:
         self.card_collection.replace_one(filter=_id, replacement=doc, upsert=True)
         self.logger.info("Inserted '%s' to the database", card["name"])
 
-    def request_cards(self, filer: Filter):
-        pass
+
+    def find_cards(self, regions: List[RegionRef], rarities: List[RarityRef], limit: int=0, projection: Union[Dict, List]=[]):
+        """"""
+        # db.getCollection('cards').find({"collectible": true, "regionRef": {$in: ["Noxus", "Ionia"]}, "rarity": {$in: ["Champion"]}})
+        query = {
+            "collectible": True,
+            "regionRef": {"$in": regions},
+            "rarityRef": {"$in": rarities}
+            }
+
+        self.logger.info("Card search query: %s", query)
+
+        return self.card_collection.find(filter=query, limit=limit, projection=projection)
+
+
+if __name__ == "__main__":
+    with MongoClient() as client:
+        for doc in client.find_cards(regions=["Noxus"], rarities=["Champion"], projection=["naame", "cardode"]):
+            print(doc)
+    
