@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List, Literal, Optional, TypedDict
 
 RegionRef = Literal[
-    "BilgeWater", "Demacia", "Freljord", "Ionia", "Noxus", "PiltoverZaun", "ShadowIsles", "Targon"
+    "Bilgewater", "Demacia", "Freljord", "Ionia", "Noxus", "PiltoverZaun", "ShadowIsles", "Targon"
 ]
 
 RarityRef = Literal["Common", "Rare", "Epic", "Champion"]
@@ -35,6 +35,13 @@ class Filter:
     count: int
     regions: Optional[Regions]
     rarities: Optional[Rarities]
+
+
+class RequestData(TypedDict):
+    region_refs: List[RegionRef]
+    rarity_refs: List[RarityRef]
+    count: int
+    language: str
 
 
 class CardAssets(TypedDict):

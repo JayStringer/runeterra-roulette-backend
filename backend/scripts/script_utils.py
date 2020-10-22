@@ -102,3 +102,13 @@ def read_set_json(set_json_path: str) -> List[Card]:
     with open(set_json_path, "r") as set_json_content:
         cards = json.load(set_json_content)
     return cards
+
+
+def get_game_version_from_image_url(image_path: str):
+    """Super brittle helper for determining the version of the cards collection.
+    don't use unless desperate, stupid or lazy."""
+    # Not keen on this but it's better than manually updating the version
+    LOGGER.info("Deconstructing version from %s", image_path)
+    version = image_path.split("/")[3]
+    LOGGER.info("Version is determined to be %s", version)
+    return version

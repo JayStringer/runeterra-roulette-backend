@@ -9,7 +9,8 @@
   "python.linting.mypyEnabled": true,
   "python.linting.mypyArgs": [
     "--show-column-numbers",
-    "--ignore-missing-imports"
+    "--ignore-missing-imports",
+    "--check-untyped-defs"
   ],
   "python.sortImports.args": ["-rc"],
   "python.formatting.provider": "black",
@@ -21,6 +22,7 @@
     }
   },
   "cSpell.words": [
+    "pylint",
     "and",
     "bligewater",
     "demacia",

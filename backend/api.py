@@ -1,65 +1,42 @@
 """API for Runterra Roulette Web Application"""
 
-from pprint import pprint
+import random
 
-from flask import Flask, Request, jsonify, request
+from flask import Flask, jsonify, request
 from flask_cors import CORS
-from requests import Response
 
-from models import Filter, Rarities, Regions
-
-app = Flask(__name__)
-CORS(app)
+import backend.api_utils as api_utils
+from backend.db_client import MongoClient
 
 
-# def _digest_url_args(req: Request) -> Filter:
-#     rarities = Rarities(
-#         common=request.args.get("common"),
-#         rare=request.args.get("rare"),
-#         epic=request.args.get("epic"),
-#         champion=request.args.get("champion"),
-#     )
-#     print(rarities)
+class RunterraRouletteAPI:
+    def __init__(self):
+        self.app = Flask(self.__class__.__name__)
+        CORS(app=self.app)
+        self.mongo_client = MongoClient()
 
-#     return None
+        self.app.add_url_rule(rule="/cards", methods=["GET"], view_func=self.get_cards)
 
+    def run(self, host: str = "localhost", port: int = 8080, debug: bool = True):
+        self.app.run(host=host, port=port, debug=debug)
 
-def digest_request(req: Request):
-    rarities = []
-    regions = []
-    no_limit = 0
+    def get_cards(self):
+        """waffles"""
+        request_data = api_utils.digest_request(req=request)
+        cards = self.mongo_client.find_cards(
+            regions=request_data["region_refs"],
+            rarities=request_data["rarity_refs"],
+            projection=["name", "assets.gameAbsolutePath", "cardCode", "set"],
+        )
 
-    handle_key = {
-        "common": lambda: rarities.append("Common"),
-        "rare": lambda: rarities.append("Rare"),
-        "epic": lambda: rarities.append("Epic"),
-        "champion": lambda: rarities.append("Champion"),
-        "bilgewater": lambda: regions.append("Bilgewater"),
-        "demacia": lambda: regions.append("Demacia"),
-        "freljord": lambda: regions.append("Freljord"),
-        "ionia": lambda: regions.append("Ionia"),
-        "noxus": lambda: regions.append("Noxus"),
-        "piltover_and_zaun": lambda: regions.append("PiltoverZaun"),
-        "shadow_isles": lambda: regions.append("ShadowIsles"),
-        "targon": lambda: regions.append("Targon"),
-    }
+        cards = list(cards)
+        if count := request_data["count"]:
+            random.shuffle(cards)
+            cards = cards[:count]
 
-    # Assignment to keep pylint happy
-    _ = [handle_key[key]() for key, value in request.args.to_dict().items() if value == "true"]
-
-    return {
-        "regionRefs": regions,
-        "rarityRefs": rarities,
-        "limit": req.args.get("count", no_limit),
-    }
-
-
-@app.route("/cards", methods=["GET"])
-def get_cards():
-    """"""
-    pprint(digest_request(req=request))
-    return jsonify({"message": "Nice request m8"})
+        return jsonify(cards)
 
 
 if __name__ == "__main__":
-    app.run(host="localhost", port=8080, debug=True)
+    api = RunterraRouletteAPI()
+    api.run()

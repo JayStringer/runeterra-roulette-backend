@@ -32,6 +32,7 @@ class MongoClient:
 
         self._db = self._client["runeterra-roulette-db"]
         self.card_collection = self._db["cards"]
+        self.collection_config = self._db["config"]
 
     def __enter__(self):
         """Allows class to be used with context manager."""
@@ -94,3 +95,32 @@ class MongoClient:
         self.logger.info("Card search query: %s", query)
 
         return self.card_collection.find(filter=query, limit=limit, projection=projection)
+
+    def get_first_image_url(self) -> str:
+        """Return absoluteGamePath url string for first card in the collection.
+        To be used exclusively to determine what the version of the card
+        collection is in the 'update_cards_database' script.
+
+        This is unfortunately the only way i've discovered of
+        getting the version of the 'latest' cards after downloading them. It
+        would be good if they included the version of the cards collection as
+        part of the meta.json file (just incase any riot devs are reading).
+
+        This method is super brittle, use at your own risk or at the very least
+        wrap this in a try.
+        """
+        self.logger.warning("Getting image url of first card, I hope you know what you're doing.")
+        first_card = self.card_collection.find_one(projection={"assets.gameAbsolutePath"})
+        return first_card["assets"][0]["gameAbsolutePath"]  # Wonky data structure
+
+    def upsert_collection_version(self, version: str) -> None:
+        """Update the version of the card collection"""
+        _id = {"_id": "version"}
+        doc = {**_id, "version": version}
+        self.collection_config.replace_one(filter=_id, replacement=doc, upsert=True)
+        self.logger.info("Updated collection version to %s", version)
+
+    def get_collection_version(self) -> str:
+        """Retrieve the collection version from the collection config"""
+        self.logger.info("Requesting collection version")
+        return self.collection_config.find_one({"_id": "version"})["version"]
