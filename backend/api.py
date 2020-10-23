@@ -26,15 +26,29 @@ class RunterraRouletteAPI:
         cards = self.mongo_client.find_cards(
             regions=request_data["region_refs"],
             rarities=request_data["rarity_refs"],
-            projection=["name", "assets.gameAbsolutePath", "cardCode", "set"],
+            projection=["name", "set"],
         )
 
+        collection_version = self.mongo_client.get_collection_version()
+
+        retval = []
+
         cards = list(cards)
+
         if count := request_data["count"]:
             random.shuffle(cards)
             cards = cards[:count]
 
-        return jsonify(cards)
+        for card in cards:
+            card["image_url"] = api_utils.build_card_image_url(
+                collection_version=collection_version,
+                card_code=card["_id"],
+                card_set=card["set"],
+                language="en_us",
+            )
+            retval.append(card)
+
+        return jsonify(retval)
 
 
 if __name__ == "__main__":

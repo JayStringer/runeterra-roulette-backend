@@ -43,3 +43,11 @@ def digest_request(req: Request) -> RequestData:
     }
 
     return request_data
+
+
+def build_card_image_url(collection_version: str, card_code: str, card_set: str, language: str):
+    """Build url string for given arguments"""
+    return (
+        "http://dd.b.pvp.net/"
+        f"{collection_version}/{card_set.lower()}/{language}/img/cards/{card_code}.png"
+    )
