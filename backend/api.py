@@ -18,10 +18,12 @@ class RunterraRouletteAPI:
         self.app.add_url_rule(rule="/cards", methods=["GET"], view_func=self.get_cards)
 
     def run(self, host: str = "localhost", port: int = 8080, debug: bool = True):
+        """Spin up the Flask server at the given credentials. Default to
+        localhost:8080 in debug mode."""
         self.app.run(host=host, port=port, debug=debug)
 
     def get_cards(self):
-        """waffles"""
+        """Endpoint to number random of cards that match the request filter."""
         request_data = api_utils.digest_request(req=request)
         cards = self.mongo_client.find_cards(
             regions=request_data["region_refs"],
