@@ -2,8 +2,6 @@
 data dragon.
 """
 
-import logging
-
 from backend.db_client import MongoClient
 from backend.scripts.script_utils import (
     delete_temp_dir,
