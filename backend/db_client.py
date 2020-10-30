@@ -83,8 +83,9 @@ class MongoClient:
     ):
         """Search for N (limit) number of cards in cards that falls under any
         of the given regions and matches rarity to one of the given rarities.
+        A limit of 0 (default) is the same as having no limit.
 
-        Specify what is return with the projection argument.
+        Specify what is returned with the projection argument.
         """
         query = {
             "collectible": True,
